@@ -1,0 +1,17 @@
+language: generic
+os: linux
+dist: focal
+services:
+  - docker
+
+before_install:
+  - docker build -t saschawissel/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true saschawissel/react-test npm test
+
+after_success:
+  - docker build -t saschawissel/multi-docker-test-client ./client
+  - docker build -t saschawissel/multi-docker-test-nginx ./nginx
+  - docker build -t saschawissel/multi-docker-test-server ./server
+  - docker build -t saschawissel/multi-docker-test-worker ./worker
